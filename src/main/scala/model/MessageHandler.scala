@@ -9,7 +9,7 @@ import spray.json._
 object MessageHandler {
 
   def config: Config = ConfigFactory.load()
-  def system = ActorSystem("PersistenceSystem")
+  def system: ActorSystem = ActorSystem("PersistenceSystem")
 
   case class Persist(json: JsValue)
   case class MessagePersisted(json: JsValue)

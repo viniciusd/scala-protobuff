@@ -31,7 +31,7 @@ trait Service extends DefaultJsonProtocol {
 
   def messageHandler: ActorRef
 
-  implicit def requestTimeout = Timeout(5 seconds)
+  implicit def requestTimeout: Timeout = Timeout(5 seconds)
 
   val routes =
     pathSingleSlash {
