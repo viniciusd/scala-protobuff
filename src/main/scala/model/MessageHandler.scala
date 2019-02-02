@@ -6,6 +6,8 @@ import akka.actor.{Actor, ActorLogging, ActorSystem}
 import com.typesafe.config.{Config, ConfigFactory}
 import spray.json._
 
+import message.Person.Person
+
 object MessageHandler {
 
   def config: Config = ConfigFactory.load()
@@ -22,6 +24,7 @@ class MessageHandler extends Actor with ActorLogging {
   override def receive: Receive = {
 
     case Persist(json) =>
+      val p = Person("foobar", 42)
       sender() ! MessagePersisted(json)
 
   }

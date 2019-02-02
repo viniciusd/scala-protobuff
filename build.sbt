@@ -32,6 +32,10 @@ libraryDependencies ++= {
   )
 }
 
+PB.targets in Compile := Seq(
+  scalapb.gen() -> (sourceManaged in Compile).value
+)
+
 Revolver.settings
 
 // Performing Scala style verification on compile time
