@@ -4,15 +4,12 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.StatusCodes.OK
 import akka.http.scaladsl.server.Directives._
-import akka.pattern.ask
 import akka.stream.{ActorMaterializer, Materializer}
-import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
 import spray.json.{DefaultJsonProtocol, JsValue}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
-import scala.util.{Failure, Success}
 
 import message.Person.Person
 import model.MessageHandler
