@@ -1,7 +1,5 @@
 package model
 
-import scala.collection.JavaConverters._
-
 import akka.actor.{Actor, ActorLogging, ActorSystem}
 import com.typesafe.config.{Config, ConfigFactory}
 
