@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  scala:
+    build: .
+    ports:
+        - "9000:9000"
+    volumes:
+        - .:/protobuff
+        - ./.sbt:/root/.sbt
+    command: run
