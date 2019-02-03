@@ -11,19 +11,20 @@ import com.typesafe.config.{Config, ConfigFactory}
 import spray.json.{DefaultJsonProtocol, JsValue}
 
 import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
 import message.Person.Person
 import model.MessageHandler
 import model.MessageHandler._
+import model.WriterHandler
+import model.WriterHandler._
 
 trait Protocol extends DefaultJsonProtocol {
   implicit val personFormat = jsonFormat2(Person.apply)
 }
 
 trait Service extends Protocol {
-
-  import scala.concurrent.duration._
 
   implicit val system: ActorSystem
 
@@ -35,7 +36,7 @@ trait Service extends Protocol {
 
   val logger: LoggingAdapter
 
-  def messageHandler: ActorRef
+  def writerHandler: ActorRef
 
   implicit def requestTimeout: Timeout = Timeout(5 seconds)
 
@@ -43,6 +44,7 @@ trait Service extends Protocol {
     pathSingleSlash {
       post {
         entity(as[JsValue]) { json =>
+          val messageHandler = system.actorOf(Props(new MessageHandler(writerHandler)))
           onComplete(messageHandler ? Persist(json.convertTo[Person])) {
             case Success(actorResponse) => actorResponse match {
               case MessagePersisted(person) => complete(person)
@@ -61,7 +63,9 @@ object AkkaHttpService extends App with Service {
 
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
-  val messageHandler = system.actorOf(Props[MessageHandler])
+  val writerHandler = system.actorOf(Props[WriterHandler])
+
+  system.scheduler.schedule(0 seconds, 10 seconds, writerHandler, Rollover)
 
   Http().bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
 }
