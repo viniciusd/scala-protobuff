@@ -11,7 +11,6 @@ object MessageHandler {
 
 class MessageHandler(writer: ActorRef) extends Actor with ActorLogging {
   import MessageHandler._
-  implicit val ec = context.dispatcher
 
   override def receive: Receive = {
 
