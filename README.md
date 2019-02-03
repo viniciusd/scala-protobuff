@@ -33,3 +33,4 @@ When building requests, be aware you must use the Content-Type application/json 
 
 * Consider alternatives for deployment, e.g., packaging into a jar file (sbt-assembly?)
 * Check whether [sbt-docker](https://github.com/marcuslonnberg/sbt-docker/) is a good option for deploying
+* Better dealing with mal-formed JSON requests. For now, it is returning an internal server error (500), yet should return a bad request (400). I need to investigate whether there is an exception to be caught at src/main/scala/AkkaHttpService.scala's route or a rejection, as it seems by looking into [akka's source code](https://github.com/akka/akka-http/blob/master/akka-http/src/main/scala/akka/http/scaladsl/server/directives/MarshallingDirectives.scala).
