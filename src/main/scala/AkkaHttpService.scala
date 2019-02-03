@@ -57,7 +57,8 @@ object AkkaHttpService extends App with Service {
   override val logger = Logging(system, getClass)
   val writerHandler = system.actorOf(Props[WriterHandler])
 
-  system.scheduler.schedule(0 seconds, 10 seconds, writerHandler, WriterHandler.Rollover)
+  system.scheduler.schedule(0 seconds, config.getInt("persistence.rollover_seconds") seconds,
+                            writerHandler, WriterHandler.Rollover)
 
   Http().bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
 }
