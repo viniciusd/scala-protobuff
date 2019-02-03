@@ -8,14 +8,20 @@ import akka.pattern.ask
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
-import model.MessageHandler
-import model.MessageHandler._
 import spray.json.{DefaultJsonProtocol, JsValue}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
-trait Service extends DefaultJsonProtocol {
+import message.Person.Person
+import model.MessageHandler
+import model.MessageHandler._
+
+trait Protocol extends DefaultJsonProtocol {
+  implicit val personFormat = jsonFormat2(Person.apply)
+}
+
+trait Service extends Protocol {
 
   import scala.concurrent.duration._
 
@@ -37,9 +43,9 @@ trait Service extends DefaultJsonProtocol {
     pathSingleSlash {
       post {
         entity(as[JsValue]) { json =>
-          onComplete(messageHandler ? Persist(json)) {
+          onComplete(messageHandler ? Persist(json.convertTo[Person])) {
             case Success(actorResponse) => actorResponse match {
-              case MessagePersisted(resp) => complete(resp)
+              case MessagePersisted(person) => complete(person)
             }
             case Failure(_) => complete(InternalServerError)
           }
